@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 
 
@@ -18,9 +19,32 @@ def load_image(image_path):
     return image
 
 
-def preprocess_image(image, image_size=(256, 256)):
-    image = tf.image.resize(image, image_size)
-    tensor = tf.expand_dims(image, axis=0)
+def load_images(image_folder_path):
+    """
+    Load all images in the defined folder (float32 conversion and normalization)
+
+    :param image_folder_path: path of the folder containing images, string
+    :return:
+        - images: Images of the folder, list of ndarray
+    """
+
+    image_list = []
+    for img in os.listdir(image_folder_path):
+        image = plt.imread(image_folder_path + img)
+        image = image.astype(np.float32)
+        image = image / 255.
+        image_list.append(image)
+
+    return image_list
+
+
+def preprocess_image(images, image_size=(256, 256)):
+    images_list = []
+    for image in images:
+        image = tf.image.resize(image, image_size)
+        images_list.append(image)
+    images = np.asarray(images_list)
+    tensor = tf.convert_to_tensor(images)
     return tensor
 
 
