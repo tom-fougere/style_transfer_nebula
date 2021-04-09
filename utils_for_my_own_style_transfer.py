@@ -1,4 +1,5 @@
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 
 def preprocess_image(image, model=None):
@@ -18,3 +19,10 @@ def preprocess_image(image, model=None):
         image = image / 255.
 
     return image
+
+
+def display(image_tensor):
+    display_image = image_tensor[0].numpy().astype('uint8')
+    plt.figure()
+    plt.imshow(display_image)
+    plt.show()

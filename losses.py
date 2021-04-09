@@ -1,30 +1,30 @@
 import tensorflow as tf
 
 
-def get_style_loss(features, targets):
+def get_style_loss(reality, expectation):
     """Expects two images of dimension h, w, c
 
-    :param features: tensor with shape: (height, width, channels)
-    :param targets: tensor with shape: (height, width, channels)
+    :param reality: tensor with shape: (height, width, channels)
+    :param expectation: tensor with shape: (height, width, channels)
 
     :return style_loss: style loss, scalar
     """
     # get the average of the squared errors
-    style_loss = tf.reduce_mean(tf.square(features - targets))
+    style_loss = tf.reduce_mean(tf.square(reality - expectation))
 
     return style_loss
 
 
-def get_content_loss(features, targets):
+def get_content_loss(reality, expectation):
     """Expects two images of dimension h, w, c
 
-    :param features: tensor with shape: (height, width, channels)
-    :param targets: tensor with shape: (height, width, channels)
+    :param reality: tensor with shape: (height, width, channels)
+    :param expectation: tensor with shape: (height, width, channels)
 
     :return content_loss: content loss, scalar
     """
     # get the sum of the squared error multiplied by a scaling factor
-    content_loss = 0.5 * tf.reduce_sum(tf.square(features - targets))
+    content_loss = 0.5 * tf.reduce_sum(tf.square(reality - expectation))
 
     return content_loss
 

@@ -2,17 +2,16 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from losses import *
-from utils_for_my_own_style_transfer import preprocess_image
+from utils_for_my_own_style_transfer import preprocess_image, display
 
 # Global variables
 selected_model_name = ''
 selected_model = None
 nb_style_layers = 0
-nb_content_layers = 0
 
 
 def create_model(model_name, layer_names, num_style_layers=1):
-    global selected_model_name, selected_model, nb_style_layers, nb_content_layers
+    global selected_model_name, selected_model, nb_style_layers
 
     selected_model_name = model_name
     if model_name == 'inception':
@@ -23,7 +22,6 @@ def create_model(model_name, layer_names, num_style_layers=1):
         print('You need to define a model !')
 
     nb_style_layers = num_style_layers
-    nb_content_layers = len(layer_names) - num_style_layers
 
 
 def vgg_model(layer_names):
@@ -89,7 +87,7 @@ def get_content_image_features(image):
     outputs = selected_model(preprocessed_content_image)
 
     # get the content layer of the outputs
-    content_outputs = outputs[nb_content_layers:]
+    content_outputs = outputs[nb_style_layers:]
 
     return content_outputs
 
@@ -106,7 +104,6 @@ def get_style_image_features(image):
     preprocessed_style_image = preprocess_image(image, selected_model_name)
 
     # get the outputs from the inception model that you created using inception_model()
-    global selected_model
     outputs = selected_model(preprocessed_style_image)
 
     # Get just the style feature layers (exclude the content layer)
@@ -206,11 +203,7 @@ def fit_style_transfer(style_image, content_image, style_weight=1e-2, content_we
     # collect the image updates starting from the content image
     updated_images.append(content_image)
 
-    display_image = content_image[0].numpy()
-    # display_fn(display_image)
-    plt.figure()
-    plt.imshow(display_image)
-    plt.show()
+    # display(content_image)
 
     for i_epoch in range(epochs):
         for i_step_per_epoch in range(steps_per_epoch):
@@ -225,14 +218,10 @@ def fit_style_transfer(style_image, content_image, style_weight=1e-2, content_we
             print(".", end='')
             if (i_step_per_epoch + 1) % 10 == 0:
                 updated_images.append(generated_image)
+                display(generated_image)
 
-            # display the current stylized image
-            # clear_output(wait=True)
-            display_image = generated_image[0].numpy()
-            # display_fn(display_image)
-            plt.figure()
-            plt.imshow(display_image)
-            plt.show()
+        # display the current stylized image
+        display(generated_image)
 
         # append to the image collection for visualization later
         updated_images.append(generated_image)
