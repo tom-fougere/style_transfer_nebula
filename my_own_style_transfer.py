@@ -14,6 +14,7 @@ content_image = tf.cast(content_image, tf.uint8)
 style_image = tf.image.resize(style_image, (512, 512))
 style_image = tf.expand_dims(style_image, 0)
 style_image = tf.cast(style_image, tf.uint8)
+
 # ######################################################################################################################
 # clear session to make layer naming consistent when re-running this cell
 tf.keras.backend.clear_session()

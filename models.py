@@ -72,26 +72,6 @@ def inception_model(layer_names):
     return model
 
 
-def get_content_image_features(image):
-    """ Get the content image features
-
-    :param image: an input image
-    :return content_outputs: the content features of the image
-    """
-    global selected_model, nb_content_layers
-
-    # preprocess the image
-    preprocessed_content_image = preprocess_image(image, selected_model_name)
-
-    # get the outputs from the inception model
-    outputs = selected_model(preprocessed_content_image)
-
-    # get the content layer of the outputs
-    content_outputs = outputs[nb_style_layers:]
-
-    return content_outputs
-
-
 def get_style_image_features(image):
     """Get the style image features
 
@@ -113,6 +93,26 @@ def get_style_image_features(image):
     gram_style_features = [gram_matrix(style_output) for style_output in style_outputs]
 
     return gram_style_features
+
+
+def get_content_image_features(image):
+    """ Get the content image features
+
+    :param image: an input image
+    :return content_outputs: the content features of the image
+    """
+    global selected_model
+
+    # preprocess the image
+    preprocessed_content_image = preprocess_image(image, selected_model_name)
+
+    # get the outputs from the inception model
+    outputs = selected_model(preprocessed_content_image)
+
+    # get the content layer of the outputs
+    content_outputs = outputs[nb_style_layers:]
+
+    return content_outputs
 
 
 def calculate_gradients(image, style_targets, content_targets,
@@ -202,8 +202,6 @@ def fit_style_transfer(style_image, content_image, style_weight=1e-2, content_we
 
     # collect the image updates starting from the content image
     updated_images.append(content_image)
-
-    # display(content_image)
 
     for i_epoch in range(epochs):
         for i_step_per_epoch in range(steps_per_epoch):
