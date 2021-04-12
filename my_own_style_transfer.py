@@ -50,14 +50,14 @@ create_model('vgg19', content_and_style_layers, num_style_layers=5)
 
 # ######################################################################################################################
 # define style and content weight
-style_weight = 1e-12
-content_weight = 1
-var_weight = 1
+style_weight = 1e-4
+content_weight = 1e-5
+var_weight = 1e-2
 
 # define optimizer. learning rate decreases per epoch.
 adam = tf.optimizers.Adam(
     tf.keras.optimizers.schedules.ExponentialDecay(
-        initial_learning_rate=30.0, decay_steps=100, decay_rate=0.80
+        initial_learning_rate=30.0, decay_steps=100, decay_rate=0.90
     )
 )
 

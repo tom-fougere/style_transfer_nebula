@@ -215,10 +215,10 @@ def fit_style_transfer(style_image, content_image, style_weight=1e-2, content_we
             step += 1
 
             # Update the image with the style using the function that you defined
-            update_image_with_style(generated_image,
-                                    style_targets, content_targets,
-                                    style_weight, content_weight,
-                                    var_weight, optimizer)
+            update_image_with_style(image=generated_image,
+                                    style_targets=style_targets, content_targets=content_targets,
+                                    style_weight=style_weight, content_weight=content_weight,
+                                    var_weight=var_weight, optimizer=optimizer)
 
             print(".", end='')
             if (i_step_per_epoch + 1) % 10 == 0:
