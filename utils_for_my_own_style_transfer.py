@@ -11,6 +11,7 @@ def preprocess_image(image, model=None):
     :return:
         - image: the preprocessed image
     """
+    image = tf.cast(image, dtype=tf.float32)
 
     if model == 'inception':
         image = (image / 127.5) - 1.0
@@ -45,10 +46,3 @@ def tensor_to_image(tensor):
     image[image < 0] = 0
     image = image.astype('uint8')
     return image
-
-    # tensor_shape = tf.shape(tensor)
-    # number_elem_shape = tf.shape(tensor_shape)
-    # if number_elem_shape > 3:
-    #     assert tensor_shape[0] == 1
-    #     tensor = tensor[0]
-    # return image, tf.keras.preprocessing.image.array_to_img(tensor)

@@ -116,7 +116,7 @@ def get_content_image_features(image):
 
 
 def calculate_gradients(image, style_targets, content_targets,
-                        style_weight, content_weight):
+                        style_weight, content_weight, var_weight):
     """ Calculate the gradients of the loss with respect to the generated image
 
     :param image: generated image
@@ -124,6 +124,7 @@ def calculate_gradients(image, style_targets, content_targets,
     :param content_targets: content features of the content image
     :param style_weight: weight given to the style loss
     :param content_weight: weight given to the content loss
+    :param var_weight: weight given to the total variation loss
 
     :return gradients: gradients of the loss with respect to the input image
     """
@@ -140,6 +141,9 @@ def calculate_gradients(image, style_targets, content_targets,
                                       content_targets, content_features,
                                       style_weight, content_weight)
 
+        # add the total variation loss
+        loss += var_weight * tf.image.total_variation(image)
+
     # calculate gradients of loss with respect to the image
     gradients = tape.gradient(loss, image)
 
@@ -147,7 +151,7 @@ def calculate_gradients(image, style_targets, content_targets,
 
 
 def update_image_with_style(image, style_targets, content_targets, style_weight,
-                            content_weight, optimizer):
+                            content_weight, var_weight, optimizer):
     """
     Update an image with a specified style
 
@@ -155,6 +159,7 @@ def update_image_with_style(image, style_targets, content_targets, style_weight,
     :param style_targets: style features of the style image
     :param content_targets: content features of the content image
     :param style_weight: weight given to the style loss
+    :param var_weight: weight given to the total variation loss
     :param content_weight: weight given to the content loss
     :param optimizer: optimizer for updating the input image
     """
@@ -162,7 +167,8 @@ def update_image_with_style(image, style_targets, content_targets, style_weight,
     # Calculate gradients using the function that you just defined.
     gradients = calculate_gradients(image,
                                     style_targets, content_targets,
-                                    style_weight, content_weight)
+                                    style_weight, content_weight,
+                                    var_weight)
 
     # apply the gradients to the given image
     optimizer.apply_gradients([(gradients, image)])
@@ -172,13 +178,14 @@ def update_image_with_style(image, style_targets, content_targets, style_weight,
 
 
 def fit_style_transfer(style_image, content_image, style_weight=1e-2, content_weight=1e-4,
-                       optimizer='adam', epochs=1, steps_per_epoch=1):
+                       var_weight=0, optimizer='adam', epochs=1, steps_per_epoch=1):
     """
     Performs neural style transfer.
     :param style_image: image to get style features from
     :param content_image: image to stylize
     :param style_weight: weight given to the style loss
     :param content_weight: weight given to the content loss
+    :param var_weight: weight given to the total variation loss
     :param optimizer: optimizer for updating the input image
     :param epochs: number of epochs
     :param steps_per_epoch = steps per epoch
@@ -211,12 +218,11 @@ def fit_style_transfer(style_image, content_image, style_weight=1e-2, content_we
             update_image_with_style(generated_image,
                                     style_targets, content_targets,
                                     style_weight, content_weight,
-                                    optimizer)
+                                    var_weight, optimizer)
 
             print(".", end='')
             if (i_step_per_epoch + 1) % 10 == 0:
                 updated_images.append(generated_image)
-                display(generated_image)
 
         # display the current stylized image
         display(generated_image)
