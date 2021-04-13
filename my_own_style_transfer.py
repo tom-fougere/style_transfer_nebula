@@ -50,7 +50,7 @@ create_model('vgg19', content_and_style_layers, num_style_layers=5)
 
 # ######################################################################################################################
 # define style and content weight
-style_weight = 1e-4
+style_weight = 1
 content_weight = 1e-5
 var_weight = 1e-2
 
@@ -60,6 +60,7 @@ adam = tf.optimizers.Adam(
         initial_learning_rate=30.0, decay_steps=100, decay_rate=0.90
     )
 )
+# adam = tf.optimizers.Adam(learning_rate=30, beta_1=0.99, epsilon=1e-1)
 
 # start the neural style transfer
 stylized_image, display_images = fit_style_transfer(style_image=style_image, content_image=content_image,

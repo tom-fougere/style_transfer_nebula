@@ -29,31 +29,6 @@ def get_content_loss(reality, expectation):
     return content_loss
 
 
-def gram_matrix(input_tensor):
-    """ Calculates the gram matrix and divides by the number of locations
-
-    :param input_tensor: tensor of shape (batch, height, width, channels)
-
-    :return scaled_gram: gram matrix divided by the number of locations
-    """
-
-    # calculate the gram matrix of the input tensor
-    gram = tf.linalg.einsum('bijc,bijd->bcd', input_tensor, input_tensor)
-
-    # get the height and width of the input tensor
-    input_shape = tf.shape(input_tensor)
-    height = input_shape[1]
-    width = input_shape[2]
-
-    # get the number of locations (height times width), and cast it as a tf.float32
-    num_locations = tf.cast(height * width, tf.float32)
-
-    # scale the gram matrix by dividing by the number of locations
-    scaled_gram = gram / num_locations
-
-    return scaled_gram
-
-
 def get_style_content_loss(style_targets, style_outputs, content_targets,
                            content_outputs, style_weight, content_weight):
     """ Combine the style and content loss

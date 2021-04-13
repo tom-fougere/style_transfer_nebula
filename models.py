@@ -72,6 +72,31 @@ def inception_model(layer_names):
     return model
 
 
+def gram_matrix(input_tensor):
+    """ Calculates the gram matrix and divides by the number of locations
+
+    :param input_tensor: tensor of shape (batch, height, width, channels)
+
+    :return scaled_gram: gram matrix divided by the number of locations
+    """
+
+    # calculate the gram matrix of the input tensor
+    gram = tf.linalg.einsum('bijc,bijd->bcd', input_tensor, input_tensor)
+
+    # get the height and width of the input tensor
+    input_shape = tf.shape(input_tensor)
+    height = input_shape[1]
+    width = input_shape[2]
+
+    # get the number of locations (height times width), and cast it as a tf.float32
+    num_locations = tf.cast(height * width, tf.float32)
+
+    # scale the gram matrix by dividing by the number of locations
+    scaled_gram = gram / num_locations
+
+    return scaled_gram
+
+
 def get_style_image_features(image):
     """Get the style image features
 
@@ -172,9 +197,6 @@ def update_image_with_style(image, style_targets, content_targets, style_weight,
 
     # apply the gradients to the given image
     optimizer.apply_gradients([(gradients, image)])
-
-    # Clip the image using the given clip_image_values() function
-    # image.assign(clip_image_values(image, min_value=0.0, max_value=255.0))
 
 
 def fit_style_transfer(style_image, content_image, style_weight=1e-2, content_weight=1e-4,
