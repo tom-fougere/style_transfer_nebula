@@ -29,6 +29,7 @@ tf.keras.backend.clear_session()
 # ######################################################################################################################
 # choose the content layer and put in a list
 content_layers = ['block5_conv2']
+content_layers = ['conv2d_88']
 
 # choose the five style layers of interest
 style_layers = ['block1_conv1',
@@ -36,6 +37,11 @@ style_layers = ['block1_conv1',
                 'block3_conv1',
                 'block4_conv1',
                 'block5_conv1']
+style_layers = ['conv2d',
+                'conv2d_1',
+                'conv2d_2',
+                'conv2d_3',
+                'conv2d_4']
 
 # combine the content and style layers into one list
 content_and_style_layers = style_layers + content_layers
@@ -44,7 +50,7 @@ content_and_style_layers = style_layers + content_layers
 # clear session to make layer naming consistent if re-running the cell
 tf.keras.backend.clear_session()
 
-create_model('vgg19', content_and_style_layers, num_style_layers=5)
+create_model('inception', content_and_style_layers, num_style_layers=5)
 # model = vgg_model(output_layers)
 # my_model = inception_model(content_and_style_layers)
 
